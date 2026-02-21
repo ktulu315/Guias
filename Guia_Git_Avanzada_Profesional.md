@@ -1,8 +1,25 @@
 # 📘 Guía Profesional de Git (Nivel Avanzado)
 
-------------------------------------------------------------------------
+# 0️⃣ Configuración Inicial de Usuario (tras instalar Git)
 
-# 1️⃣ Modelo Interno de Git
+Enlace de descarga:
+https://git-scm.com/
+
+Configura tu identidad antes de hacer commits:
+
+    git config --global user.name "Tu Nombre"
+    git config --global user.email "tu@email.com"
+
+Verifica la configuración aplicada:
+
+    git config --global --list
+
+Opcional recomendado:
+
+-   `git config --global init.defaultBranch main` (rama inicial por defecto)
+-   `git config --global core.autocrlf true` (Windows)
+
+------------------------------------------------------------------------# 1️⃣ Modelo Interno de Git
 
 ## Arquitectura de Datos
 
@@ -22,7 +39,6 @@ Git almacena:
 Cada commit apunta a su(s) padre(s). No existen ciclos.
 
 ------------------------------------------------------------------------
-
 # 2️⃣ Estados Internos
 
     Working Directory → Staging Area → Repository
@@ -32,7 +48,6 @@ Cada commit apunta a su(s) padre(s). No existen ciclos.
 -   Repository → Base de datos de objetos
 
 ------------------------------------------------------------------------
-
 # 3️⃣ Flujo Profesional (Feature Branch Workflow)
 
 1.  `git clone URL`
@@ -46,7 +61,6 @@ Cada commit apunta a su(s) padre(s). No existen ciclos.
 9.  `git branch -d feature-x`
 
 ------------------------------------------------------------------------
-
 # 4️⃣ Rebase Avanzado
 
 ## Rebase simple
@@ -67,7 +81,6 @@ Permite:
 -   drop → eliminar commit
 
 ------------------------------------------------------------------------
-
 # 5️⃣ Cherry Pick
 
 Aplicar commit específico:
@@ -77,7 +90,6 @@ Aplicar commit específico:
 Útil para traer un cambio puntual sin hacer merge completo.
 
 ------------------------------------------------------------------------
-
 # 6️⃣ Git Bisect (Depuración)
 
 Buscar commit que introdujo un bug:
@@ -89,7 +101,6 @@ Buscar commit que introdujo un bug:
 Git usa búsqueda binaria para localizar el problema.
 
 ------------------------------------------------------------------------
-
 # 7️⃣ Reset vs Revert
 
 ## Reset (reescribe historia)
@@ -107,7 +118,6 @@ Git usa búsqueda binaria para localizar el problema.
 -   No reescribe historial
 
 ------------------------------------------------------------------------
-
 # 8️⃣ HEAD y Referencias
 
 -   HEAD → Puntero actual
@@ -119,7 +129,6 @@ Ver referencias:
 `git show-ref`
 
 ------------------------------------------------------------------------
-
 # 9️⃣ Diagnóstico Completo
 
     git status
@@ -127,7 +136,6 @@ Ver referencias:
     git log --oneline --graph --decorate --all
 
 ------------------------------------------------------------------------
-
 # 🔟 Recuperación Avanzada
 
 ## Reflog
@@ -141,7 +149,6 @@ Recuperar commit:
 `git checkout <hash>`
 
 ------------------------------------------------------------------------
-
 # 1️⃣1️⃣ Errores Comunes
 
   Error                    Causa
@@ -152,7 +159,6 @@ Recuperar commit:
   unrelated histories      Dos raíces distintas
 
 ------------------------------------------------------------------------
-
 # 1️⃣2️⃣ Buenas Prácticas
 
 -   No usar `--force` en ramas compartidas
@@ -162,10 +168,12 @@ Recuperar commit:
 -   Pull frecuente antes de push
 
 ------------------------------------------------------------------------
-
 # 🧠 Resumen Conceptual
 
 Git es una base de datos distribuida de snapshots inmutables conectados
 en un grafo acíclico dirigido (DAG).
 
 Las ramas son simplemente punteros móviles.
+
+
+
