@@ -1,0 +1,912 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cheatsheet CSS — Editor Visual Interactivo</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: system-ui, -apple-system, sans-serif;
+    background: #f0f2f5; color: #1a1a2e; line-height: 1.5; padding: 1.5rem;
+  }
+  .container { max-width: 1200px; margin: auto; }
+  h1 {
+    font-size: clamp(1.5rem, 3.5vw, 2.2rem);
+    margin-bottom: .15rem; font-weight: 800; letter-spacing: -.03em;
+  }
+  .subtitle { color: #666; margin-bottom: 1.5rem; font-size: .95rem; }
+
+  .section {
+    background: #fff; border-radius: 14px; margin-bottom: 1.25rem;
+    box-shadow: 0 1px 3px rgb(0 0 0 / .06); border: 1px solid rgb(0 0 0 / .04);
+    overflow: hidden;
+  }
+  .section-header {
+    padding: 1rem 1.25rem .5rem;
+  }
+  .section-header h2 {
+    font-size: 1.05rem; font-weight: 700;
+    display: flex; align-items: center; gap: .5rem;
+  }
+  .section-header h2 .num {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 24px; height: 24px; background: #1a1a2e; color: #fff;
+    border-radius: 6px; font-size: .7rem; font-weight: 700;
+  }
+  .section-header p { color: #555; font-size: .85rem; margin-top: .2rem; }
+  .section-body {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 0;
+  }
+  @media (max-width: 768px) {
+    .section-body { grid-template-columns: 1fr; }
+  }
+
+  .visual-panel {
+    padding: 1.25rem; min-height: 160px;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    background: #fafbfc; border-right: 1px solid #e8eaed;
+    gap: 8px;
+  }
+  @media (max-width: 768px) {
+    .visual-panel { border-right: none; border-bottom: 1px solid #e8eaed; }
+  }
+  .visual-panel.row { flex-direction: row; flex-wrap: wrap; }
+
+  .editor-panel {
+    position: relative; background: #1a1a2e;
+    min-height: 160px; overflow: hidden;
+  }
+  .editor-panel .code-output {
+    position: absolute; inset: 0; overflow: auto;
+    margin: 0; padding: 1rem; font-family: 'Consolas', 'Courier New', monospace;
+    font-size: .8rem; line-height: 1.6; white-space: pre-wrap; word-break: break-all;
+    color: #e4e4e4; pointer-events: none;
+  }
+  @supports not (inset: 0) {
+    .editor-panel .code-output { top: 0; right: 0; bottom: 0; left: 0; }
+  }
+  .editor-panel .code-input {
+    position: absolute; inset: 0;
+    margin: 0; padding: 1rem; font-family: 'Consolas', 'Courier New', monospace;
+    font-size: .8rem; line-height: 1.6; white-space: pre-wrap; word-break: break-all;
+    color: transparent; caret-color: #fff; background: transparent;
+    border: none; outline: none; resize: none; overflow: auto;
+  }
+  @supports not (inset: 0) {
+    .editor-panel .code-input { top: 0; right: 0; bottom: 0; left: 0; }
+  }
+  .editor-panel .code-input::selection {
+    background: rgba(255,255,255,.2);
+  }
+  .editor-panel .code-label {
+    position: absolute; top: .25rem; right: .5rem;
+    font-size: .6rem; color: rgba(255,255,255,.3); letter-spacing: .05em;
+    text-transform: uppercase; pointer-events: none;
+  }
+
+  .section-footer {
+    padding: .5rem 1.25rem; background: #f8f9fb;
+    border-top: 1px solid #e8eaed; font-size: .82rem; color: #555;
+  }
+  .section-footer strong { color: #1a1a2e; }
+
+  .syn-selector { color: #f92672; }
+  .syn-property { color: #66d9ef; }
+  .syn-value { color: #a6e22e; }
+  .syn-number { color: #ae81ff; }
+  .syn-comment { color: #75715e; font-style: italic; }
+  .syn-atrule { color: #e6db74; }
+  .syn-punctuation { color: #e4e4e4; }
+  .syn-string { color: #e6db74; }
+
+  .badge-s {
+    display: inline-block; padding: 2px 8px; border-radius: 999px;
+    font-size: .75rem; font-weight: 600;
+  }
+  .txt-muted { font-size: .75rem; color: #888; }
+  .txt-small { font-size: .82rem; }
+  .w-full { width: 100%; }
+  .mw-260 { max-width: 260px; }
+  .mw-280 { max-width: 280px; }
+  .mw-240 { max-width: 240px; }
+  .mw-200 { max-width: 200px; }
+
+  /* ── Base styles for all demos (no inline styles) ── */
+
+  /* Sec1: Selectores */
+  [data-demo="sec1"] .s1-card {
+    background: #4a7bff; color: #fff; padding: 12px 20px; border-radius: 8px;
+    font-weight: 600; font-size: .9rem; cursor: default;
+    transition: transform .15s, background .15s, box-shadow .15s;
+  }
+  [data-demo="sec1"] .s1-card:hover {
+    transform: scale(1.08);
+    box-shadow: 0 4px 16px rgb(0 0 0 / .2);
+  }
+
+  /* Sec2: Box Model */
+  [data-demo="sec2"] .s2-outer {
+    background: #e8f0fe; padding: 12px; border: 3px dashed #4af;
+    margin: 4px; border-radius: 6px;
+  }
+  [data-demo="sec2"] .s2-inner {
+    background: #4af; padding: 12px; border: 3px solid #1a5fd0;
+    margin: 4px; border-radius: 3px; color: #fff;
+    text-align: center; font-weight: 600; font-size: .85rem;
+  }
+
+  /* Sec3: Colores */
+  [data-demo="sec3"] .s3-gradient {
+    background: linear-gradient(135deg, #f06, #4af);
+    padding: 14px; border-radius: 8px; color: #fff;
+    text-align: center; font-weight: 600; font-size: .85rem;
+  }
+  [data-demo="sec3"] .s3-radial {
+    background: radial-gradient(circle at top left, #667eea, #1a1a2e);
+    padding: 14px; border-radius: 8px; color: #fff;
+    text-align: center; font-weight: 600; font-size: .85rem;
+  }
+
+  /* Sec4: Tipografía */
+  [data-demo="sec4"] .s4-fluid {
+    font-size: clamp(1rem, 3vw, 1.6rem); font-weight: 700;
+    letter-spacing: -.02em; text-align: center;
+  }
+  [data-demo="sec4"] .s4-balance {
+    text-wrap: balance; font-size: .85rem;
+    background: #f4f5f7; padding: 8px 12px; border-radius: 6px;
+  }
+  [data-demo="sec4"] .s4-ellipsis {
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    font-size: .82rem; background: #f4f5f7; padding: 6px 10px; border-radius: 6px;
+  }
+
+  /* Sec5: Flexbox */
+  [data-demo="sec5"] .s5-navbar {
+    display: flex; justify-content: space-between; align-items: center;
+    background: #1a1a2e; padding: 8px 12px; border-radius: 8px; color: #fff; font-size: .8rem;
+  }
+  [data-demo="sec5"] .s5-nav-items { display: flex; gap: 8px; }
+  [data-demo="sec5"] .s5-nav-muted { color: #888; }
+  [data-demo="sec5"] .s5-avatar-group {
+    display: flex; align-items: center; gap: 10px;
+  }
+  [data-demo="sec5"] .s5-avatar {
+    width: 36px; height: 36px; background: #4af; border-radius: 50%;
+  }
+
+  /* Sec6: Grid */
+  [data-demo="sec6"] .s6-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px;
+  }
+  [data-demo="sec6"] .s6-grid div {
+    background: #4af; padding: 14px 8px; border-radius: 6px;
+    color: #fff; text-align: center; font-weight: 600; font-size: .8rem;
+  }
+  [data-demo="sec6"] .s6-grid div:nth-child(n+4) { background: #6a9fff; }
+
+  /* Sec7: Posicionamiento */
+  [data-demo="sec7"] .s7-container {
+    position: relative; background: #e8eaed; padding: 20px;
+    border-radius: 8px; text-align: center; font-size: .8rem; color: #555;
+  }
+  [data-demo="sec7"] .s7-badge {
+    position: absolute; top: -8px; right: -8px;
+    background: #e44; color: #fff; width: 24px; height: 24px;
+    border-radius: 50%; display: flex; align-items: center;
+    justify-content: center; font-size: .7rem; font-weight: 700;
+  }
+
+  /* Sec8: Bordes y Sombras */
+  [data-demo="sec8"] .s8-card {
+    background: #fff; border-radius: 6px; padding: 10px;
+    font-size: .75rem; text-align: center;
+  }
+  [data-demo="sec8"] .s8-shadow { box-shadow: 0 2px 8px rgb(0 0 0 / .1); }
+  [data-demo="sec8"] .s8-ring { box-shadow: 0 0 0 2px #4af; }
+  [data-demo="sec8"] .s8-pill {
+    border-radius: 999px; padding: 8px 14px;
+    box-shadow: 0 4px 12px rgb(0 0 0 / .1);
+  }
+  [data-demo="sec8"] .s8-drop { filter: drop-shadow(0 4px 4px rgb(0 0 0 / .2)); }
+
+  /* Sec9: Transiciones */
+  [data-demo="sec9"] .s9-card {
+    background: #fff; border-radius: 8px; padding: 12px 16px;
+    text-align: center; font-size: .8rem; font-weight: 600;
+    box-shadow: 0 2px 8px rgb(0 0 0 / .08);
+    transition: transform .2s ease, box-shadow .2s ease;
+    cursor: default;
+  }
+  [data-demo="sec9"] .s9-card:hover {
+    transform: scale(1.08);
+    box-shadow: 0 6px 20px rgb(0 0 0 / .15);
+  }
+  [data-demo="sec9"] .s9-bounce {
+    transition: transform .3s cubic-bezier(.68,-.55,.27,1.55), box-shadow .3s ease;
+  }
+  [data-demo="sec9"] .s9-bounce:hover { transform: scale(1.15); }
+  [data-demo="sec9"] .s9-color {
+    background: #4af; color: #fff;
+    transition: background .3s ease;
+  }
+  [data-demo="sec9"] .s9-color:hover { background: #f06; }
+
+  /* Sec10: Animaciones */
+  [data-demo="sec10"] .s10-bounce {
+    width: 36px; height: 36px; background: #4af; border-radius: 6px;
+    animation: anim-bounce .8s ease infinite alternate;
+  }
+  [data-demo="sec10"] .s10-pulse {
+    width: 36px; height: 36px; background: #f06; border-radius: 50%;
+    animation: anim-pulse 1.2s ease infinite;
+  }
+  [data-demo="sec10"] .s10-spin {
+    width: 36px; height: 36px;
+    background: linear-gradient(135deg, #4af, #f06);
+    border-radius: 6px; animation: anim-spin 1.5s linear infinite;
+  }
+  [data-demo="sec10"] .s10-track {
+    width: 120px; height: 4px; background: #e0e0e0;
+    border-radius: 2px; overflow: hidden;
+  }
+  [data-demo="sec10"] .s10-bar {
+    height: 100%; width: 30%;
+    background: linear-gradient(90deg, #4af, #f06);
+    border-radius: 2px; animation: anim-slide 1.2s ease infinite;
+  }
+
+  /* Sec11: Transformaciones */
+  [data-demo="sec11"] .s11-card {
+    background: #fff; border-radius: 8px; padding: 10px 14px;
+    font-size: .75rem; font-weight: 600; text-align: center;
+    box-shadow: 0 2px 8px rgb(0 0 0 / .08);
+    transition: transform .2s ease; cursor: default;
+  }
+  [data-demo="sec11"] .s11-scale:hover { transform: scale(1.2); }
+  [data-demo="sec11"] .s11-rotate:hover { transform: rotate(12deg); }
+  [data-demo="sec11"] .s11-translate:hover { transform: translateY(-6px); }
+  [data-demo="sec11"] .s11-skew:hover { transform: skew(6deg); }
+
+  /* Sec12: Responsive */
+  [data-demo="sec12"] .s12-fluid {
+    width: clamp(180px, 70%, 400px);
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    padding: 12px; border-radius: 8px; color: #fff;
+    text-align: center; font-weight: 600; font-size: .8rem;
+  }
+
+  /* Sec13: Efectos UI */
+  [data-demo="sec13"] .s13-glass {
+    backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+    background: rgb(255 255 255 / .25);
+    border: 1px solid rgb(255 255 255 / .5);
+    border-radius: 12px; padding: 16px;
+    text-align: center; font-weight: 600; font-size: .85rem;
+  }
+  [data-demo="sec13"] .s13-clip {
+    background: linear-gradient(135deg, #f06, #f90);
+    padding: 16px; border-radius: 8px; color: #fff;
+    text-align: center; font-weight: 600; font-size: .85rem;
+    clip-path: polygon(0 0, 100% 0, 100% 75%, 0 100%);
+  }
+  [data-demo="sec13"] .s13-blur { filter: blur(2px); }
+  [data-demo="sec13"] .s13-bright { filter: brightness(1.4); }
+  [data-demo="sec13"] .s13-gray { filter: grayscale(1); }
+
+  /* Sec14: Variables */
+  [data-demo="sec14"] .s14-card {
+    background: var(--primary, #4af); color: #fff;
+    padding: 14px 20px; border-radius: 8px;
+    text-align: center; font-weight: 600; font-size: .9rem;
+  }
+
+  @keyframes anim-bounce {
+    from { transform: translateY(0); }
+    to   { transform: translateY(-14px); }
+  }
+  @keyframes anim-pulse {
+    0%   { transform: scale(1); opacity: 1; }
+    50%  { transform: scale(1.15); opacity: .7; }
+    100% { transform: scale(1); opacity: 1; }
+  }
+  @keyframes anim-spin {
+    to { transform: rotate(360deg); }
+  }
+  @keyframes anim-slide {
+    0%   { transform: translateX(-100%); }
+    100% { transform: translateX(350%); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+<h1>🎨 CSS Cheatsheet Visual</h1>
+<p class="subtitle">Ejemplos interactivos con editor en vivo — modifica el código de la derecha y los cambios se reflejan al instante.</p>
+
+<!-- 1. Selectores -->
+<div class="section" data-demo="sec1">
+  <div class="section-header">
+    <h2><span class="num">1</span> Selectores y Especificidad</h2>
+    <p>Selectores modernos <code>:hover</code>, <code>:has()</code>, <code>:is()</code></p>
+  </div>
+  <div class="section-body">
+    <div class="visual-panel">
+      <div class="s1-card">:hover — Pasa el mouse</div>
+      <div class="flex-row" style="justify-content:center;">
+        <span class="badge-s" style="background:#e8f0fe;color:#1a73e8;">:not(.x)</span>
+        <span class="badge-s" style="background:#e6f4ea;color:#188038;">:has(span)</span>
+        <span class="badge-s" style="background:#fef7e0;color:#ea8600;">:is(h1, h2)</span>
+      </div>
+    </div>
+    <div class="editor-panel">
+      <span class="code-label">CSS</span>
+      <pre class="code-output" id="output-1"><code id="highlight-1"><span class="syn-selector">.s1-card</span><span class="syn-punctuation">:</span><span class="syn-selector">hover</span> <span class="syn-punctuation">{</span>
+  <span class="syn-property">background</span>: <span class="syn-number">#f06</span>;
+  <span class="syn-property">transform</span>: <span class="syn-value">scale</span>(<span class="syn-number">1.08</span>);
+<span class="syn-punctuation">}</span></code></pre>
+      <textarea class="code-input" id="code-1" spellcheck="false">.s1-card:hover {
+  background: #f06;
+  transform: scale(1.08);
+}</textarea>
+    </div>
+  </div>
+  <div class="section-footer"><strong>Decisión:</strong> <code>:has()</code> para estilos del padre según hijos. <code>:is()</code> para agrupar sin aumentar especificidad. Preferir clases sobre IDs.</div>
+</div>
+
+<!-- 2. Box Model -->
+<div class="section" data-demo="sec2">
+  <div class="section-header">
+    <h2><span class="num">2</span> Box Model</h2>
+    <p><code>content → padding → border → margin</code></p>
+  </div>
+  <div class="section-body">
+    <div class="visual-panel">
+      <div class="s2-outer w-full mw-260">
+        <div class="s2-inner">Content</div>
+      </div>
+    </div>
+    <div class="editor-panel">
+      <span class="code-label">CSS</span>
+      <pre class="code-output" id="output-2"><code id="highlight-2"><span class="syn-selector">.s2-inner</span> <span class="syn-punctuation">{</span>
+  <span class="syn-property">padding</span>: <span class="syn-number">12px</span>;
+  <span class="syn-property">border</span>: <span class="syn-number">3px</span> <span class="syn-value">solid</span> <span class="syn-number">#1a5fd0</span>;
+  <span class="syn-property">margin</span>: <span class="syn-number">4px</span>;
+<span class="syn-punctuation">}</span></code></pre>
+      <textarea class="code-input" id="code-2" spellcheck="false">.s2-inner {
+  padding: 12px;
+  border: 3px solid #1a5fd0;
+  margin: 4px;
+}</textarea>
+    </div>
+  </div>
+  <div class="section-footer"><strong>Tip:</strong> Siempre <code>box-sizing: border-box</code> en el reset. Así <code>width</code> incluye padding y borde.</div>
+</div>
+
+<!-- 3. Colores -->
+<div class="section" data-demo="sec3">
+  <div class="section-header">
+    <h2><span class="num">3</span> Colores y Fondos</h2>
+    <p>Degradados, OKLCH, colores modernos</p>
+  </div>
+  <div class="section-body">
+    <div class="visual-panel">
+      <div class="s3-gradient w-full mw-260">linear-gradient(135deg, #f06, #4af)</div>
+      <div class="s3-radial w-full mw-260">radial-gradient</div>
+    </div>
+    <div class="editor-panel">
+      <span class="code-label">CSS</span>
+      <pre class="code-output" id="output-3"><code id="highlight-3"><span class="syn-selector">.s3-gradient</span> <span class="syn-punctuation">{</span>
+  <span class="syn-property">background</span>: <span class="syn-value">linear-gradient</span>(<span class="syn-number">135deg</span>, <span class="syn-number">#f06</span>, <span class="syn-number">#4af</span>);
+  <span class="syn-property">border-radius</span>: <span class="syn-number">8px</span>;
+<span class="syn-punctuation">}</span></code></pre>
+      <textarea class="code-input" id="code-3" spellcheck="false">.s3-gradient {
+  background: linear-gradient(135deg, #f06, #4af);
+  border-radius: 8px;
+}</textarea>
+    </div>
+  </div>
+  <div class="section-footer"><strong>Moderno:</strong> <code>oklch(70% 0.2 150)</code> para colores perceptuales uniformes. Mejor que HSL para gradientes suaves.</div>
+</div>
+
+<!-- 4. Tipografía -->
+<div class="section" data-demo="sec4">
+  <div class="section-header">
+    <h2><span class="num">4</span> Tipografía Moderna</h2>
+    <p><code>clamp()</code>, <code>text-wrap: balance</code>, <code>ellipsis</code></p>
+  </div>
+  <div class="section-body">
+    <div class="visual-panel" style="align-items:stretch;">
+      <div class="s4-fluid">Texto fluido — redimensiona</div>
+      <div class="s4-balance w-full mw-280" style="margin:0 auto;">
+        Título largo sin palabras viudas
+      </div>
+      <div class="s4-ellipsis w-full mw-240" style="margin:0 auto;">
+        Texto muy largo que se corta con puntos suspensivos
+      </div>
+    </div>
+    <div class="editor-panel">
+      <span class="code-label">CSS</span>
+      <pre class="code-output" id="output-4"><code id="highlight-4"><span class="syn-selector">.s4-fluid</span> <span class="syn-punctuation">{</span>
+  <span class="syn-property">font-size</span>: <span class="syn-value">clamp</span>(<span class="syn-number">1rem</span>, <span class="syn-number">3vw</span>, <span class="syn-number">1.6rem</span>);
+  <span class="syn-property">letter-spacing</span>: -<span class="syn-number">.02em</span>;
+<span class="syn-punctuation">}</span>
+<span class="syn-selector">.s4-ellipsis</span> <span class="syn-punctuation">{</span>
+  <span class="syn-property">text-overflow</span>: <span class="syn-value">ellipsis</span>;
+  <span class="syn-property">white-space</span>: <span class="syn-value">nowrap</span>;
+  <span class="syn-property">overflow</span>: <span class="syn-value">hidden</span>;
+<span class="syn-punctuation">}</span></code></pre>
+      <textarea class="code-input" id="code-4" spellcheck="false">.s4-fluid {
+  font-size: clamp(1rem, 3vw, 1.6rem);
+  letter-spacing: -.02em;
+}
+.s4-ellipsis {
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+}</textarea>
+    </div>
+  </div>
+  <div class="section-footer"><strong>Decisión:</strong> <code>clamp()</code> para tipografía responsive sin media queries. <code>text-wrap: balance</code> solo en titulares (no en párrafos).</div>
+</div>
+
+<!-- 5. Flexbox -->
+<div class="section" data-demo="sec5">
+  <div class="section-header">
+    <h2><span class="num">5</span> Flexbox</h2>
+    <p>Layout unidimensional: navbar, centros, filas</p>
+  </div>
+  <div class="section-body">
+    <div class="visual-panel" style="gap:12px;">
+      <div class="s5-navbar w-full mw-280">
+        <span style="font-weight:700;">Logo</span>
+        <div class="s5-nav-items">
+          <span>Inicio</span>
+          <span class="s5-nav-muted">Servicios</span>
+          <span class="s5-nav-muted">Contacto</span>
+        </div>
+      </div>
+      <div class="s5-avatar-group w-full mw-200">
+        <div class="s5-avatar"></div>
+        <div><strong class="txt-small">Perfil</strong><br><span class="txt-muted">online</span></div>
+      </div>
+    </div>
+    <div class="editor-panel">
+      <span class="code-label">CSS</span>
+      <pre class="code-output" id="output-5"><code id="highlight-5"><span class="syn-selector">.s5-navbar</span> <span class="syn-punctuation">{</span>
+  <span class="syn-property">display</span>: <span class="syn-value">flex</span>;
+  <span class="syn-property">justify-content</span>: <span class="syn-value">space-between</span>;
+  <span class="syn-property">align-items</span>: <span class="syn-value">center</span>;
+<span class="syn-punctuation">}</span></code></pre>
+      <textarea class="code-input" id="code-5" spellcheck="false">.s5-navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}</textarea>
+    </div>
+  </div>
+  <div class="section-footer"><strong>Decisión:</strong> Flexbox = 1D. Para layouts en dos dimensiones (filas y columnas), usar Grid.</div>
+</div>
+
+<!-- 6. Grid -->
+<div class="section" data-demo="sec6">
+  <div class="section-header">
+    <h2><span class="num">6</span> Grid</h2>
+    <p>Layout bidimensional — galerías, dashboards</p>
+  </div>
+  <div class="section-body">
+    <div class="visual-panel">
+      <div class="s6-grid w-full mw-260">
+        <div>1</div><div>2</div><div>3</div>
+        <div>4</div><div>5</div><div>6</div>
+      </div>
+    </div>
+    <div class="editor-panel">
+      <span class="code-label">CSS</span>
+      <pre class="code-output" id="output-6"><code id="highlight-6"><span class="syn-selector">.s6-grid</span> <span class="syn-punctuation">{</span>
+  <span class="syn-property">display</span>: <span class="syn-value">grid</span>;
+  <span class="syn-property">grid-template-columns</span>: <span class="syn-value">repeat</span>(<span class="syn-number">3</span>, <span class="syn-number">1fr</span>);
+  <span class="syn-property">gap</span>: <span class="syn-number">6px</span>;
+<span class="syn-punctuation">}</span></code></pre>
+      <textarea class="code-input" id="code-6" spellcheck="false">.s6-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+}</textarea>
+    </div>
+  </div>
+  <div class="section-footer"><strong>Decisión:</strong> Grid = 2D. <code>auto-fill</code> + <code>minmax()</code> para grids responsive sin media queries.</div>
+</div>
+
+<!-- 7. Posicionamiento -->
+<div class="section" data-demo="sec7">
+  <div class="section-header">
+    <h2><span class="num">7</span> Posicionamiento</h2>
+    <p><code>relative</code>, <code>absolute</code>, <code>fixed</code>, <code>sticky</code></p>
+  </div>
+  <div class="section-body">
+    <div class="visual-panel">
+      <div class="s7-container w-full mw-240">
+        Contenedor relative
+        <div class="s7-badge">x</div>
+      </div>
+    </div>
+    <div class="editor-panel">
+      <span class="code-label">CSS</span>
+      <pre class="code-output" id="output-7"><code id="highlight-7"><span class="syn-selector">.s7-badge</span> <span class="syn-punctuation">{</span>
+  <span class="syn-property">position</span>: <span class="syn-value">absolute</span>;
+  <span class="syn-property">top</span>: -<span class="syn-number">8px</span>;
+  <span class="syn-property">right</span>: -<span class="syn-number">8px</span>;
+<span class="syn-punctuation">}</span></code></pre>
+      <textarea class="code-input" id="code-7" spellcheck="false">.s7-badge {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+}</textarea>
+    </div>
+  </div>
+  <div class="section-footer"><strong>Decisión:</strong> <code>sticky</code> para headers/navs. <code>absolute</code> para badges/tooltips. <code>fixed</code> para overlays.</div>
+</div>
+
+<!-- 8. Bordes y Sombras -->
+<div class="section" data-demo="sec8">
+  <div class="section-header">
+    <h2><span class="num">8</span> Bordes y Sombras</h2>
+    <p><code>border-radius</code>, <code>box-shadow</code>, <code>filter: drop-shadow</code></p>
+  </div>
+  <div class="section-body">
+    <div class="visual-panel row" style="gap:8px;">
+      <div class="s8-card s8-shadow">shadow</div>
+      <div class="s8-card s8-ring">ring</div>
+      <div class="s8-card s8-pill">pill</div>
+      <div class="s8-card s8-drop">drop</div>
+    </div>
+    <div class="editor-panel">
+      <span class="code-label">CSS</span>
+      <pre class="code-output" id="output-8"><code id="highlight-8"><span class="syn-selector">.s8-shadow</span> <span class="syn-punctuation">{</span>
+  <span class="syn-property">box-shadow</span>: <span class="syn-number">0</span> <span class="syn-number">2px</span> <span class="syn-number">8px</span> <span class="syn-value">rgb</span>(<span class="syn-number">0 0 0 / .1</span>);
+  <span class="syn-property">border-radius</span>: <span class="syn-number">6px</span>;
+<span class="syn-punctuation">}</span></code></pre>
+      <textarea class="code-input" id="code-8" spellcheck="false">.s8-shadow {
+  box-shadow: 0 2px 8px rgb(0 0 0 / .1);
+  border-radius: 6px;
+}</textarea>
+    </div>
+  </div>
+  <div class="section-footer"><strong>Tip:</strong> <code>box-shadow</code> para sombras de caja. <code>filter: drop-shadow()</code> para sombras que siguen bordes con transparencia.</div>
+</div>
+
+<!-- 9. Transiciones -->
+<div class="section" data-demo="sec9">
+  <div class="section-header">
+    <h2><span class="num">9</span> Transiciones</h2>
+    <p>Pasa el mouse — modifica la curva o duración</p>
+  </div>
+  <div class="section-body">
+    <div class="visual-panel row" style="gap:8px;">
+      <div class="s9-card">ease</div>
+      <div class="s9-card s9-bounce">bounce</div>
+      <div class="s9-card s9-color">color shift</div>
+    </div>
+    <div class="editor-panel">
+      <span class="code-label">CSS</span>
+      <pre class="code-output" id="output-9"><code id="highlight-9"><span class="syn-selector">.s9-card</span> <span class="syn-punctuation">{</span>
+  <span class="syn-property">transition</span>:
+    <span class="syn-property">transform</span> <span class="syn-number">.2s</span> <span class="syn-value">ease</span>,
+    <span class="syn-property">box-shadow</span> <span class="syn-number">.2s</span> <span class="syn-value">ease</span>;
+<span class="syn-punctuation">}</span>
+<span class="syn-selector">.s9-card</span><span class="syn-punctuation">:</span><span class="syn-selector">hover</span> <span class="syn-punctuation">{</span>
+  <span class="syn-property">transform</span>: <span class="syn-value">scale</span>(<span class="syn-number">1.08</span>);
+<span class="syn-punctuation">}</span></code></pre>
+      <textarea class="code-input" id="code-9" spellcheck="false">.s9-card {
+  transition: transform .2s ease, box-shadow .2s ease;
+}
+.s9-card:hover {
+  transform: scale(1.08);
+}</textarea>
+    </div>
+  </div>
+  <div class="section-footer"><strong>Rendimiento:</strong> Transicionar <code>opacity</code> y <code>transform</code>. Evitar <code>transition: all</code> y propiedades como <code>width</code>/<code>height</code>.</div>
+</div>
+
+<!-- 10. Animaciones -->
+<div class="section" data-demo="sec10">
+  <div class="section-header">
+    <h2><span class="num">10</span> Animaciones</h2>
+    <p><code>@keyframes</code> — pasa el mouse para pausar</p>
+  </div>
+  <div class="section-body">
+    <div class="visual-panel row" style="gap:12px;">
+      <div class="s10-bounce"></div>
+      <div class="s10-pulse"></div>
+      <div class="s10-spin"></div>
+      <div class="s10-track">
+        <div class="s10-bar"></div>
+      </div>
+    </div>
+    <div class="editor-panel">
+      <span class="code-label">CSS</span>
+      <pre class="code-output" id="output-10"><code id="highlight-10"><span class="syn-atrule">@keyframes anim-bounce</span> <span class="syn-punctuation">{</span>
+  <span class="syn-value">from</span> <span class="syn-punctuation">{</span> <span class="syn-property">transform</span>: <span class="syn-value">translateY</span>(<span class="syn-number">0</span>); <span class="syn-punctuation">}</span>
+  <span class="syn-value">to</span>   <span class="syn-punctuation">{</span> <span class="syn-property">transform</span>: <span class="syn-value">translateY</span>(-<span class="syn-number">14px</span>); <span class="syn-punctuation">}</span>
+<span class="syn-punctuation">}</span>
+<span class="syn-selector">.s10-bounce</span> <span class="syn-punctuation">{</span>
+  <span class="syn-property">animation</span>: <span class="syn-value">anim-bounce</span> <span class="syn-number">.8s</span> <span class="syn-value">ease</span> <span class="syn-value">infinite</span> <span class="syn-value">alternate</span>;
+<span class="syn-punctuation">}</span></code></pre>
+      <textarea class="code-input" id="code-10" spellcheck="false">@keyframes anim-bounce {
+  from { transform: translateY(0); }
+  to   { transform: translateY(-14px); }
+}
+.s10-bounce {
+  animation: anim-bounce .8s ease infinite alternate;
+}</textarea>
+    </div>
+  </div>
+  <div class="section-footer"><strong>Accesibilidad:</strong> Usar <code>@media (prefers-reduced-motion: reduce) { animation: none; }</code>.</div>
+</div>
+
+<!-- 11. Transformaciones -->
+<div class="section" data-demo="sec11">
+  <div class="section-header">
+    <h2><span class="num">11</span> Transformaciones</h2>
+    <p>Pasa el mouse — <code>scale</code>, <code>rotate</code>, <code>translate</code>, <code>skew</code></p>
+  </div>
+  <div class="section-body">
+    <div class="visual-panel row" style="gap:8px;">
+      <div class="s11-card s11-scale">scale</div>
+      <div class="s11-card s11-rotate">rotate</div>
+      <div class="s11-card s11-translate">translate</div>
+      <div class="s11-card s11-skew">skew</div>
+    </div>
+    <div class="editor-panel">
+      <span class="code-label">CSS</span>
+      <pre class="code-output" id="output-11"><code id="highlight-11"><span class="syn-selector">.s11-scale</span><span class="syn-punctuation">:</span><span class="syn-selector">hover</span> <span class="syn-punctuation">{</span>
+  <span class="syn-property">transform</span>: <span class="syn-value">scale</span>(<span class="syn-number">1.2</span>);
+<span class="syn-punctuation">}</span></code></pre>
+      <textarea class="code-input" id="code-11" spellcheck="false">.s11-scale:hover {
+  transform: scale(1.2);
+}</textarea>
+    </div>
+  </div>
+  <div class="section-footer"><strong>Decisión:</strong> Para centrar verticalmente: <code>position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);</code>.</div>
+</div>
+
+<!-- 12. Responsive -->
+<div class="section" data-demo="sec12">
+  <div class="section-header">
+    <h2><span class="num">12</span> Responsive</h2>
+    <p><code>clamp()</code>, <code>@media</code>, <code>container queries</code>, <code>dvh</code></p>
+  </div>
+  <div class="section-body">
+    <div class="visual-panel">
+      <div class="s12-fluid">clamp(180px, 70%, 400px)</div>
+      <div class="txt-muted">Redimensiona la ventana — se ajusta solo</div>
+    </div>
+    <div class="editor-panel">
+      <span class="code-label">CSS</span>
+      <pre class="code-output" id="output-12"><code id="highlight-12"><span class="syn-selector">.s12-fluid</span> <span class="syn-punctuation">{</span>
+  <span class="syn-property">width</span>: <span class="syn-value">clamp</span>(<span class="syn-number">180px</span>, <span class="syn-number">70%</span>, <span class="syn-number">400px</span>);
+  <span class="syn-property">border-radius</span>: <span class="syn-number">8px</span>;
+<span class="syn-punctuation">}</span></code></pre>
+      <textarea class="code-input" id="code-12" spellcheck="false">.s12-fluid {
+  width: clamp(180px, 70%, 400px);
+  border-radius: 8px;
+}</textarea>
+    </div>
+  </div>
+  <div class="section-footer"><strong>Decisión:</strong> <code>@media</code> para layout global. <code>@container</code> para componentes. <code>clamp()</code> para tamaños fluidos. <code>100dvh</code> para altura real en móviles.</div>
+</div>
+
+<!-- 13. Efectos UI -->
+<div class="section" data-demo="sec13">
+  <div class="section-header">
+    <h2><span class="num">13</span> Efectos UI Modernos</h2>
+    <p><code>backdrop-filter</code>, <code>clip-path</code>, glassmorphism</p>
+  </div>
+  <div class="section-body">
+    <div class="visual-panel" style="gap:10px;">
+      <div class="s13-glass w-full mw-240">✨ Glassmorphism</div>
+      <div class="s13-clip w-full mw-240">clip-path polygon</div>
+    </div>
+    <div class="editor-panel">
+      <span class="code-label">CSS</span>
+      <pre class="code-output" id="output-13"><code id="highlight-13"><span class="syn-selector">.s13-glass</span> <span class="syn-punctuation">{</span>
+  <span class="syn-property">backdrop-filter</span>: <span class="syn-value">blur</span>(<span class="syn-number">12px</span>);
+  <span class="syn-property">background</span>: <span class="syn-value">rgb</span>(<span class="syn-number">255 255 255 / .25</span>);
+  <span class="syn-property">border-radius</span>: <span class="syn-number">12px</span>;
+<span class="syn-punctuation">}</span></code></pre>
+      <textarea class="code-input" id="code-13" spellcheck="false">.s13-glass {
+  backdrop-filter: blur(12px);
+  background: rgb(255 255 255 / .25);
+  border-radius: 12px;
+}</textarea>
+    </div>
+  </div>
+  <div class="section-footer"><strong>Decisión:</strong> <code>backdrop-filter</code> para glassmorphism. <code>clip-path</code> para formas decorativas. <code>mix-blend-mode: difference</code> para UI adaptable al fondo.</div>
+</div>
+
+<!-- 14. Variables CSS -->
+<div class="section" data-demo="sec14">
+  <div class="section-header">
+    <h2><span class="num">14</span> Variables CSS</h2>
+    <p>Custom properties — modifica el valor en el editor</p>
+  </div>
+  <div class="section-body">
+    <div class="visual-panel">
+      <div class="s14-card w-full mw-220">Fondo: var(--primary)</div>
+      <div class="txt-muted">Edita <code>--primary</code> en el código →</div>
+    </div>
+    <div class="editor-panel">
+      <span class="code-label">CSS</span>
+      <pre class="code-output" id="output-14"><code id="highlight-14"><span class="syn-selector">.s14-card</span> <span class="syn-punctuation">{</span>
+  <span class="syn-property">background</span>: <span class="syn-value">var</span>(<span class="syn-property">--primary</span>, <span class="syn-number">#4af</span>);
+  <span class="syn-property">border-radius</span>: <span class="syn-number">8px</span>;
+  <span class="syn-property">color</span>: <span class="syn-number">#fff</span>;
+  <span class="syn-property">padding</span>: <span class="syn-number">14px</span> <span class="syn-number">20px</span>;
+<span class="syn-punctuation">}</span></code></pre>
+      <textarea class="code-input" id="code-14" spellcheck="false">.s14-card {
+  background: var(--primary, #4af);
+  border-radius: 8px;
+  color: #fff;
+  padding: 14px 20px;
+}</textarea>
+    </div>
+  </div>
+  <div class="section-footer"><strong>Tip:</strong> Usar <code>@property</code> para variables tipadas animables. Preferir variables para temas y evitar valores mágicos repetidos.</div>
+</div>
+
+</div><!-- /container -->
+
+<style id="dynamic-styles"></style>
+
+<script>
+(function() {
+
+function escapeHTML(str) {
+  return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+function highlightCSS(code) {
+  const lines = code.split('\n');
+  const result = [];
+  for (const line of lines) {
+    let processed = '';
+    let i = 0;
+    const len = line.length;
+    while (i < len) {
+      if (line[i] === '/' && line[i+1] === '*') {
+        const end = line.indexOf('*/', i + 2);
+        const commentEnd = end === -1 ? len : end + 2;
+        processed += '<span class="syn-comment">' + escapeHTML(line.slice(i, commentEnd)) + '</span>';
+        i = commentEnd;
+        continue;
+      }
+      if (line[i] === '"' || line[i] === "'") {
+        const quote = line[i];
+        let j = i + 1;
+        while (j < len && line[j] !== quote) j++;
+        if (j < len) j++;
+        processed += '<span class="syn-string">' + escapeHTML(line.slice(i, j)) + '</span>';
+        i = j;
+        continue;
+      }
+      if (line[i] === '@') {
+        let j = i + 1;
+        while (j < len && /[a-zA-Z0-9_-]/.test(line[j])) j++;
+        processed += '<span class="syn-atrule">' + escapeHTML(line.slice(i, j)) + '</span>';
+        i = j;
+        continue;
+      }
+      if (/[0-9#.]/.test(line[i]) && !(line[i] === '.' && (i+1 >= len || !/\d/.test(line[i+1])))) {
+        let j = i;
+        if (line[i] === '#') {
+          j = i + 1;
+          while (j < len && /[0-9a-fA-F]/.test(line[j])) j++;
+        } else if (/\d/.test(line[i])) {
+          j = i + 1;
+          while (j < len && /[0-9.]/.test(line[j])) j++;
+          const unitStart = j;
+          while (j < len && /[a-zA-Z%]/.test(line[j])) j++;
+          if (j === unitStart && line[i] === '.') {
+            processed += escapeHTML('.');
+            i++;
+            continue;
+          }
+        } else {
+          processed += escapeHTML(line[i]);
+          i++;
+          continue;
+        }
+        processed += '<span class="syn-number">' + escapeHTML(line.slice(i, j)) + '</span>';
+        i = j;
+        continue;
+      }
+      if ('{}:;,'.includes(line[i])) {
+        processed += '<span class="syn-punctuation">' + escapeHTML(line[i]) + '</span>';
+        i++;
+        continue;
+      }
+      let j = i;
+      while (j < len && !/[\s{}:;,#.'"()@]/.test(line[j])) j++;
+      const word = line.slice(i, j);
+      if (word.length > 0) {
+        const rest = line.slice(j);
+        const nextNonSpace = rest.trimStart()[0];
+        if (nextNonSpace === ':') {
+          processed += '<span class="syn-property">' + escapeHTML(word) + '</span>';
+        } else {
+          const check = rest.trimStart();
+          if (check[0] === '(') {
+            processed += '<span class="syn-value">' + escapeHTML(word) + '</span>';
+          } else {
+            processed += '<span class="syn-selector">' + escapeHTML(word) + '</span>';
+          }
+        }
+        i = j;
+      } else {
+        processed += escapeHTML(line[i]);
+        i++;
+      }
+    }
+    result.push(processed);
+  }
+  return result.join('\n');
+}
+
+const textareas = document.querySelectorAll('.code-input');
+
+textareas.forEach(ta => {
+  const outputCode = ta.parentElement.querySelector('.code-output code');
+
+  function update() {
+    const css = ta.value;
+    outputCode.innerHTML = highlightCSS(css);
+    const section = ta.closest('[data-demo]');
+    if (section) {
+      const scope = section.getAttribute('data-demo');
+      const scoped = css.replace(/([^\r\n,{}]+)(?=\s*\{)/g, (match) => {
+        const trimmed = match.trim();
+        if (trimmed.startsWith('@') || trimmed.startsWith('from') || trimmed.startsWith('to') ||
+            trimmed.startsWith('0%') || trimmed.startsWith('100%') || trimmed.startsWith('50%')) {
+          return match;
+        }
+        return trimmed.split(',').map(s => `[data-demo="${scope}"] ${s.trim()}`).join(',');
+      });
+      let styleEl = document.getElementById('dynamic-' + scope);
+      if (!styleEl) {
+        styleEl = document.createElement('style');
+        styleEl.id = 'dynamic-' + scope;
+        document.getElementById('dynamic-styles').after(styleEl);
+      }
+      styleEl.textContent = scoped;
+    }
+  }
+
+  ta.addEventListener('input', update);
+
+  function syncScroll() {
+    const pre = ta.parentElement.querySelector('.code-output');
+    if (pre) {
+      pre.scrollTop = ta.scrollTop;
+      pre.scrollLeft = ta.scrollLeft;
+    }
+  }
+  ta.addEventListener('scroll', syncScroll);
+
+  setTimeout(update, 0);
+});
+
+})();
+</script>
+
+</body>
+</html>

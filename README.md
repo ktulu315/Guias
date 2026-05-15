@@ -1,32 +1,37 @@
-# Guía Rápida de Comandos Git - GitLab y GitHub
+# Cheatsheets de Referencia Rápida
 
 ## Descripción
 
-Esta es una guía rápida de referencia para los comandos más esenciales de **Git**, diseñada para trabajar con plataformas como **GitLab** y **GitHub**. Aquí encontrarás los comandos fundamentales para clonar repositorios, hacer commits, crear ramas, y colaborar en equipos de desarrollo.
-
-
+Colección de guías rápidas de referencia con comandos esenciales organizados por orden de necesidad. Cada cheatsheet está diseñado para consulta rápida, desde lo básico hasta temas avanzados.
 
 ## Contenido
 
 - **Guia_Git_Avanzada_Profesional.md**: Documentación avanzada y profesional sobre Git con ejemplos detallados
+- **Cheatsheet-Git.md**: Referencia rápida de comandos Git organizada por orden de necesidad
+- **Cheatsheet-SQL.md**: Referencia rápida de comandos SQL organizada por orden de necesidad
+- **Cheatsheet-CSS.md**: Referencia rápida de CSS moderno con notas de decisión y ejemplos inline
+- **Cheatsheet-CSS.html**: Página interactiva con ejemplos visuales de CSS renderizados en vivo
 
 ## Uso Rápido
 
-Consulta los archivos de esta guía para obtener comandos listos para usar en tus proyectos de GitHub y GitLab.
+Elige el cheatsheet del tema que necesites. Cada archivo está organizado de forma progresiva: primero lo que más se necesita, luego temas más avanzados.
 
 ## Para Quién es Esta Guía
 
-- Desarrolladores que necesitan una referencia rápida de comandos Git
-- Equipos que trabajan con GitLab o GitHub
-- Principiantes y profesionales que desean mejorar su flujo de trabajo con Git
+- Desarrolladores que necesitan una referencia rápida de comandos
+- Profesionales que quieren consultar comandos sin buscar en documentación extensa
 
 ## Estructura del Proyecto
 
 ```
 ├── README.md (este archivo)
-└── Guia_Git_Avanzada_Profesional.md
+├── Guia_Git_Avanzada_Profesional.md
+├── Cheatsheet-Git.md
+├── Cheatsheet-SQL.md
+├── Cheatsheet-CSS.md
+└── Cheatsheet-CSS.html
 ```
 
 ---
 
-*Última actualización: 20 de febrero de 2026*
+*Última actualización: 12 de mayo de 2026*
