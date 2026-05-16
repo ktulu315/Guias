@@ -334,7 +334,7 @@
 <div class="section" data-demo="sec1">
   <div class="section-header">
     <h2><span class="num">1</span> Selectores y Especificidad</h2>
-    <p>Selectores modernos <code>:hover</code>, <code>:has()</code>, <code>:is()</code></p>
+    <p>Los selectores apuntan a elementos del HTML. La <strong>especificidad</strong> decide qué regla gana: ID > Clase > Etiqueta. Usar clases sobre IDs en CSS — las IDs son para JavaScript. Los selectores modernos como <code>:has()</code> y <code>:is()</code> permiten escribir reglas más potentes sin elevar la especificidad.</p>
   </div>
   <div class="section-body">
     <div class="visual-panel">
@@ -357,14 +357,14 @@
 }</textarea>
     </div>
   </div>
-  <div class="section-footer"><strong>Decisión:</strong> <code>:has()</code> para estilos del padre según hijos. <code>:is()</code> para agrupar sin aumentar especificidad. Preferir clases sobre IDs.</div>
+  <div class="section-footer"><strong>Decisión:</strong> <code>:has()</code> para estilos del padre según hijos (cards con imagen vs sin imagen). <code>:is()</code> para agrupar selectores sin elevar especificidad. <code>:not()</code> para bordes o estilos en todos excepto el último. Preferir <strong>clases sobre IDs</strong> — las IDs son para JavaScript.</div>
 </div>
 
 <!-- 2. Box Model -->
 <div class="section" data-demo="sec2">
   <div class="section-header">
     <h2><span class="num">2</span> Box Model</h2>
-    <p><code>content → padding → border → margin</code></p>
+    <p>Todo elemento es una caja: <strong>content → padding → border → margin</strong>. <code>padding</code> separa el contenido del borde, <code>margin</code> separa la caja de los vecinos.</p>
   </div>
   <div class="section-body">
     <div class="visual-panel">
@@ -386,14 +386,14 @@
 }</textarea>
     </div>
   </div>
-  <div class="section-footer"><strong>Tip:</strong> Siempre <code>box-sizing: border-box</code> en el reset. Así <code>width</code> incluye padding y borde.</div>
+  <div class="section-footer"><strong>Tip:</strong> Siempre <code>box-sizing: border-box</code> en el reset universal. Sin él, si pones <code>width: 100px; padding: 20px</code>, el elemento mide 140px. Con <code>border-box</code>, el width incluye padding y borde. El margen vertical entre bloques se <strong>colapsa</strong> (se usa el mayor).</div>
 </div>
 
 <!-- 3. Colores -->
 <div class="section" data-demo="sec3">
   <div class="section-header">
     <h2><span class="num">3</span> Colores y Fondos</h2>
-    <p>Degradados, OKLCH, colores modernos</p>
+    <p>Degradados, OKLCH, colores modernos. Los degradados se tratan como imágenes de fondo. OKLCH es un espacio perceptual uniforme, mejor que HSL para gradientes suaves.</p>
   </div>
   <div class="section-body">
     <div class="visual-panel">
@@ -419,7 +419,7 @@
 <div class="section" data-demo="sec4">
   <div class="section-header">
     <h2><span class="num">4</span> Tipografía Moderna</h2>
-    <p><code>clamp()</code>, <code>text-wrap: balance</code>, <code>ellipsis</code></p>
+    <p>La tipografía moderna aprovecha <code>clamp()</code> para tamaños de fuente fluidos que escalan con la ventana sin media queries. <code>text-wrap: balance</code> evita palabras viudas en titulares. <code>text-overflow: ellipsis</code> corta texto desbordado con puntos suspensivos. La <strong>jerarquía tipográfica</strong> (peso, tamaño, espaciado) guía la legibilidad más que cualquier propiedad aislada.</p>
   </div>
   <div class="section-body">
     <div class="visual-panel" style="align-items:stretch;">
@@ -460,7 +460,7 @@
 <div class="section" data-demo="sec5">
   <div class="section-header">
     <h2><span class="num">5</span> Flexbox</h2>
-    <p>Layout unidimensional: navbar, centros, filas</p>
+    <p>Flexbox es un modelo de layout <strong>unidimensional</strong> (una fila o una columna). El <strong>eje principal</strong> se define con <code>flex-direction</code>; el <strong>eje cruzado</strong> es perpendicular. <code>justify-content</code> alinea en el eje principal, <code>align-items</code> en el cruzado. Ideal para navbars, centros verticales, grupos de avatares, y componentes donde los hijos deben distribuirse en una línea.</p>
   </div>
   <div class="section-body">
     <div class="visual-panel" style="gap:12px;">
@@ -498,7 +498,7 @@
 <div class="section" data-demo="sec6">
   <div class="section-header">
     <h2><span class="num">6</span> Grid</h2>
-    <p>Layout bidimensional — galerías, dashboards</p>
+    <p>Grid es un modelo de layout <strong>bidimensional</strong> (filas y columnas simultáneamente). <code>grid-template-columns</code> y <code>grid-template-rows</code> definen la estructura. <code>repeat()</code>, <code>minmax()</code> y <code>auto-fill</code>/<code>auto-fit</code> permiten grids responsive sin media queries. Grid debe usarse para layouts de página, galerías, dashboards. Flexbox queda para layouts lineales (1D).</p>
   </div>
   <div class="section-body">
     <div class="visual-panel">
@@ -528,7 +528,7 @@
 <div class="section" data-demo="sec7">
   <div class="section-header">
     <h2><span class="num">7</span> Posicionamiento</h2>
-    <p><code>relative</code>, <code>absolute</code>, <code>fixed</code>, <code>sticky</code></p>
+    <p>El posicionamiento saca elementos del flujo normal o los ancla a un contexto. <code>relative</code> mantiene el espacio original pero permite desplazar. <code>absolute</code> saca del flujo y se posiciona respecto al ancestro <code>relative</code> más cercano. <code>fixed</code> ancla al viewport. <code>sticky</code> alterna entre <code>relative</code> y <code>fixed</code> al hacer scroll. Elegir según: ¿el contexto de anclaje es un contenedor (<code>absolute</code>) o la ventana (<code>fixed</code>)?</p>
   </div>
   <div class="section-body">
     <div class="visual-panel">
@@ -558,7 +558,7 @@
 <div class="section" data-demo="sec8">
   <div class="section-header">
     <h2><span class="num">8</span> Bordes y Sombras</h2>
-    <p><code>border-radius</code>, <code>box-shadow</code>, <code>filter: drop-shadow</code></p>
+    <p>Los bordes definen el perímetro de una caja; <code>border-radius</code> suaviza sus esquinas (valores grandes crean formas de píldora o círculos). <code>box-shadow</code> proyecta sombras de caja (desplazamiento, desenfoque, expansión, color). <code>filter: drop-shadow()</code> genera sombras que siguen los bordes visuales incluyendo transparencia — a diferencia de <code>box-shadow</code> que solo sombrea el rectángulo de la caja.</p>
   </div>
   <div class="section-body">
     <div class="visual-panel row" style="gap:8px;">
@@ -586,7 +586,7 @@
 <div class="section" data-demo="sec9">
   <div class="section-header">
     <h2><span class="num">9</span> Transiciones</h2>
-    <p>Pasa el mouse — modifica la curva o duración</p>
+    <p>Las transiciones animan cambios de estado (como <code>:hover</code>) interpolando entre valores inicial y final. Se definen con: propiedad a animar, duración, función de temporización (<code>ease</code>, <code>linear</code>, <code>cubic-bezier()</code>) y retardo. Para rendimiento, transicionar solo <code>opacity</code> y <code>transform</code> — evita <code>width</code>, <code>height</code>, <code>margin</code> que fuerzan <strong>reflow</strong>.</p>
   </div>
   <div class="section-body">
     <div class="visual-panel row" style="gap:8px;">
@@ -619,7 +619,7 @@
 <div class="section" data-demo="sec10">
   <div class="section-header">
     <h2><span class="num">10</span> Animaciones</h2>
-    <p><code>@keyframes</code> — pasa el mouse para pausar</p>
+    <p><code>@keyframes</code> define secuencias de animación con pasos (porcentajes o <code>from</code>/<code>to</code>). <code>animation</code> agrupa: nombre, duración, temporización, repetición, dirección, estado de relleno. A diferencia de las transiciones, las animaciones pueden reproducirse automáticamente, en bucle, y en múltiples pasos. Usar <code>prefers-reduced-motion</code> para respetar preferencias de accesibilidad.</p>
   </div>
   <div class="section-body">
     <div class="visual-panel row" style="gap:12px;">
@@ -655,7 +655,7 @@
 <div class="section" data-demo="sec11">
   <div class="section-header">
     <h2><span class="num">11</span> Transformaciones</h2>
-    <p>Pasa el mouse — <code>scale</code>, <code>rotate</code>, <code>translate</code>, <code>skew</code></p>
+    <p>Las transformaciones modifican la apariencia de un elemento sin afectar el flujo del documento. <code>scale()</code> cambia tamaño, <code>rotate()</code> gira, <code>translate()</code> desplaza, <code>skew()</code> inclina. Se pueden combinar varias transformaciones separando con espacios. <code>transform-origin</code> controla el punto de anclaje (por defecto el centro). Son ideales para micro-interacciones porque solo activan <strong>composición</strong>, no reflow.</p>
   </div>
   <div class="section-body">
     <div class="visual-panel row" style="gap:8px;">
@@ -681,7 +681,7 @@
 <div class="section" data-demo="sec12">
   <div class="section-header">
     <h2><span class="num">12</span> Responsive</h2>
-    <p><code>clamp()</code>, <code>@media</code>, <code>container queries</code>, <code>dvh</code></p>
+    <p>El diseño responsive adapta la interfaz al tamaño del viewport. <code>clamp(min, preferido, max)</code> crea valores fluidos sin media queries. <code>@media</code> cambia layouts en puntos de quiebre. <code>@container</code> responde al tamaño del contenedor, no del viewport (ideal para componentes reutilizables). <code>100dvh</code> reemplaza <code>100vh</code> para altura real en móviles con barras dinámicas.</p>
   </div>
   <div class="section-body">
     <div class="visual-panel">
@@ -707,7 +707,7 @@
 <div class="section" data-demo="sec13">
   <div class="section-header">
     <h2><span class="num">13</span> Efectos UI Modernos</h2>
-    <p><code>backdrop-filter</code>, <code>clip-path</code>, glassmorphism</p>
+    <p>Efectos modernos que funcionan sin JavaScript. <code>backdrop-filter</code> aplica filtros al fondo detrás del elemento (clave para <strong>glassmorphism</strong>). <code>clip-path</code> recorta el elemento en formas arbitrarias (polígonos, círculos). <code>mix-blend-mode</code> combina colores del elemento con los de detrás. <code>filter</code> aplica efectos visuales (desenfoque, brillo, escala de grises) a todo el elemento.</p>
   </div>
   <div class="section-body">
     <div class="visual-panel" style="gap:10px;">
@@ -735,7 +735,7 @@
 <div class="section" data-demo="sec14">
   <div class="section-header">
     <h2><span class="num">14</span> Variables CSS</h2>
-    <p>Custom properties — modifica el valor en el editor</p>
+    <p>Las <strong>custom properties</strong> (variables CSS) almacenan valores reutilizables y respetan la cascada. Se definen con <code>--nombre</code> y se leen con <code>var(--nombre, fallback)</code>. A diferencia de variables Sass, son dinámicas: cambian en tiempo real (temas, media queries, hover). <code>@property</code> permite registrar variables con tipo (<code>&lt;color&gt;</code>, <code>&lt;length&gt;</code>) para que sean animables.</p>
   </div>
   <div class="section-body">
     <div class="visual-panel">
