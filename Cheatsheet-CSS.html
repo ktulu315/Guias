@@ -55,26 +55,23 @@
 
   .editor-panel {
     position: relative; background: #1a1a2e;
-    min-height: 160px; overflow: hidden;
-  }
-  .editor-panel .code-output {
-    position: absolute; inset: 0; overflow: auto;
-    margin: 0; padding: 1rem; font-family: 'Consolas', 'Courier New', monospace;
-    font-size: .8rem; line-height: 1.6; white-space: pre-wrap; word-break: break-all;
-    color: #e4e4e4; pointer-events: none;
-  }
-  @supports not (inset: 0) {
-    .editor-panel .code-output { top: 0; right: 0; bottom: 0; left: 0; }
+    min-height: 160px;
   }
   .editor-panel .code-input {
-    position: absolute; inset: 0;
-    margin: 0; padding: 1rem; font-family: 'Consolas', 'Courier New', monospace;
+    display: block; width: 100%; min-height: 160px;
+    margin: 0; padding: 1rem;
+    font-family: 'Consolas', 'Courier New', monospace;
     font-size: .8rem; line-height: 1.6; white-space: pre-wrap; word-break: break-all;
-    color: transparent; caret-color: #fff; background: transparent;
-    border: none; outline: none; resize: none; overflow: auto;
+    color: #e4e4e4; background: transparent;
+    border: none; outline: none; box-sizing: border-box;
+    overflow-y: scroll; overflow-x: hidden;
+    scrollbar-gutter: stable;
   }
-  @supports not (inset: 0) {
-    .editor-panel .code-input { top: 0; right: 0; bottom: 0; left: 0; }
+  .editor-panel .code-input:focus {
+    box-shadow: inset 0 0 0 1px rgba(255,255,255,.12);
+  }
+  .editor-panel .code-output {
+    display: none;
   }
   .editor-panel .code-input::selection {
     background: rgba(255,255,255,.2);
@@ -862,47 +859,95 @@ function highlightCSS(code) {
   return result.join('\n');
 }
 
-const textareas = document.querySelectorAll('.code-input');
+function getTextOffset(el) {
+  const sel = window.getSelection();
+  if (!sel.rangeCount) return 0;
+  const range = sel.getRangeAt(0);
+  const preRange = document.createRange();
+  preRange.selectNodeContents(el);
+  preRange.setEnd(range.endContainer, range.endOffset);
+  return preRange.toString().length;
+}
 
-textareas.forEach(ta => {
-  const outputCode = ta.parentElement.querySelector('.code-output code');
-
-  function update() {
-    const css = ta.value;
-    outputCode.innerHTML = highlightCSS(css);
-    const section = ta.closest('[data-demo]');
-    if (section) {
-      const scope = section.getAttribute('data-demo');
-      const scoped = css.replace(/([^\r\n,{}]+)(?=\s*\{)/g, (match) => {
-        const trimmed = match.trim();
-        if (trimmed.startsWith('@') || trimmed.startsWith('from') || trimmed.startsWith('to') ||
-            trimmed.startsWith('0%') || trimmed.startsWith('100%') || trimmed.startsWith('50%')) {
-          return match;
-        }
-        return trimmed.split(',').map(s => `[data-demo="${scope}"] ${s.trim()}`).join(',');
-      });
-      let styleEl = document.getElementById('dynamic-' + scope);
-      if (!styleEl) {
-        styleEl = document.createElement('style');
-        styleEl.id = 'dynamic-' + scope;
-        document.getElementById('dynamic-styles').after(styleEl);
-      }
-      styleEl.textContent = scoped;
+function setTextOffset(el, offset) {
+  const sel = window.getSelection();
+  let charCount = 0;
+  const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT, null, false);
+  let node;
+  while (node = walker.nextNode()) {
+    const len = node.textContent.length;
+    if (charCount + len >= offset) {
+      const range = document.createRange();
+      range.setStart(node, Math.min(offset - charCount, len));
+      range.collapse(true);
+      sel.removeAllRanges();
+      sel.addRange(range);
+      return;
     }
+    charCount += len;
   }
+  const lastNode = el.lastChild;
+  if (lastNode) {
+    const range = document.createRange();
+    range.setStart(lastNode, lastNode.textContent ? lastNode.textContent.length : 0);
+    range.collapse(true);
+    sel.removeAllRanges();
+    sel.addRange(range);
+  }
+}
 
-  ta.addEventListener('input', update);
-
-  function syncScroll() {
-    const pre = ta.parentElement.querySelector('.code-output');
-    if (pre) {
-      pre.scrollTop = ta.scrollTop;
-      pre.scrollLeft = ta.scrollLeft;
+function updateDemo(css, section) {
+  if (!section) return;
+  const scope = section.getAttribute('data-demo');
+  const scoped = css.replace(/([^\r\n,{}]+)(?=\s*\{)/g, (match) => {
+    const trimmed = match.trim();
+    if (trimmed.startsWith('@') || trimmed.startsWith('from') || trimmed.startsWith('to') ||
+        trimmed.startsWith('0%') || trimmed.startsWith('100%') || trimmed.startsWith('50%')) {
+      return match;
     }
+    return trimmed.split(',').map(s => `[data-demo="${scope}"] ${s.trim()}`).join(',');
+  });
+  let styleEl = document.getElementById('dynamic-' + scope);
+  if (!styleEl) {
+    styleEl = document.createElement('style');
+    styleEl.id = 'dynamic-' + scope;
+    document.getElementById('dynamic-styles').after(styleEl);
   }
-  ta.addEventListener('scroll', syncScroll);
+  styleEl.textContent = scoped;
+}
 
-  setTimeout(update, 0);
+// Transform each editor panel: replace textarea+pre with contenteditable pre
+document.querySelectorAll('.editor-panel').forEach(panel => {
+  const textarea = panel.querySelector('.code-input');
+  const outputPre = panel.querySelector('.code-output');
+  if (!textarea || !outputPre) return;
+
+  const highlightedHTML = outputPre.innerHTML;
+  const initialCSS = textarea.value;
+
+  const editor = document.createElement('pre');
+  editor.className = 'code-input';
+  editor.contentEditable = 'true';
+  editor.spellcheck = false;
+  editor.innerHTML = highlightedHTML;
+
+  textarea.replaceWith(editor);
+  outputPre.remove();
+
+  // Also remove the code-label span so it doesn't interfere
+  const label = panel.querySelector('.code-label');
+  if (label) label.remove();
+
+  editor.addEventListener('input', function() {
+    const offset = getTextOffset(this);
+    const text = this.textContent;
+    this.innerHTML = highlightCSS(text);
+    setTextOffset(this, offset);
+    updateDemo(text, this.closest('[data-demo]'));
+  });
+
+  // Initial demo update
+  updateDemo(initialCSS, panel.closest('[data-demo]'));
 });
 
 })();
