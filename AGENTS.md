@@ -6,6 +6,11 @@ This is a Spanish-language Git reference guide. No code, no build/test/lint tool
 
 - `README.md` — project overview
 - `Guia_Git_Avanzada_Profesional.md` — comprehensive advanced Git reference in Spanish
+- `Cheatsheet-Git.md` — Git quick reference
+- `Cheatsheet-SQL.md` — SQL quick reference
+- `Cheatsheet-CSS.md` — CSS quick reference
+- `Cheatsheet-CSS.html` — interactive CSS visual editor
+- `Cheatsheet-BigQuery.md` — BigQuery (Standard SQL) quick reference
 
 ## Notes
 

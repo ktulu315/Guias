@@ -11,6 +11,7 @@ Colección de guías rápidas de referencia con comandos esenciales organizados 
 - **Cheatsheet-SQL.md**: Referencia rápida de comandos SQL organizada por orden de necesidad
 - **Cheatsheet-CSS.md**: Referencia rápida de CSS moderno con notas de decisión y ejemplos inline
 - **Cheatsheet-CSS.html**: Página interactiva con ejemplos visuales de CSS renderizados en vivo
+- **Cheatsheet-BigQuery.md**: Referencia rápida de BigQuery (Standard SQL) con funciones nativas, optimización y particionamiento
 
 ## Uso Rápido
 
@@ -29,9 +30,10 @@ Elige el cheatsheet del tema que necesites. Cada archivo está organizado de for
 ├── Cheatsheet-Git.md
 ├── Cheatsheet-SQL.md
 ├── Cheatsheet-CSS.md
-└── Cheatsheet-CSS.html
+├── Cheatsheet-CSS.html
+├── Cheatsheet-BigQuery.md
 ```
 
 ---
 
-*Última actualización: 12 de mayo de 2026*
+*Última actualización: 19 de mayo de 2026*
